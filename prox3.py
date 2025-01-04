@@ -1,6 +1,9 @@
 import discord
 from discord import app_commands
 import random
+import re
+import os
+from dotenv import load_dotenv
 
 class AnonymousMessageBot(discord.Client):
     def __init__(self):
@@ -18,14 +21,43 @@ class AnonymousMessageBot(discord.Client):
 
 bot = AnonymousMessageBot()
 
-@bot.tree.command(name="prox3", description="Send an anonymous message.")
-async def prox3(interaction: discord.Interaction, message: str):
-    
+def extract_confession_number(content):
+    match = re.match(r"Confession #(\d+):", content)
+    if match:
+        return int(match.group(1))
+    return 0
+
+@bot.tree.command(name="prox3", description="Send an anonymous message or confession.")
+@app_commands.describe(
+    message_type="Choose between 'confession' or 'message'",
+    message="The content of your anonymous message or confession"
+)
+@app_commands.choices(
+    message_type=[
+        app_commands.Choice(name="Confession", value="confession"),
+        app_commands.Choice(name="Message", value="message"),
+    ]
+)
+async def prox3(interaction: discord.Interaction, message_type: app_commands.Choice[str], message: str):
     await interaction.response.send_message("Your anonymous message has been sent!", ephemeral=True)
     
     channel = interaction.channel
-    anonymous_id = f"Anon-{random.randint(1000, 9999)}"
-    await channel.send(f"Anonymous Message from {anonymous_id}: {message}")
+    if message_type.value == "confession":
+        last_bot_message = None
+        async for msg in channel.history(limit=50):
+            if msg.author == bot.user:
+                last_bot_message = msg
+                break
 
+        confession_number = 1
+        if last_bot_message:
+            confession_number = extract_confession_number(last_bot_message.content) + 1
 
-bot.run('thing')
+        await channel.send(f"Confession #{confession_number}: {message}")
+
+    elif message_type.value == "message":
+        await channel.send(f"{message}")
+
+load_dotenv()
+token = os.getenv("BOT_TOKEN")
+bot.run(token)
