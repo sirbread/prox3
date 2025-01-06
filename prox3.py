@@ -3,7 +3,7 @@ from discord import app_commands
 import re
 import os
 from dotenv import load_dotenv
-#confession counter resets when message is sent
+
 class AnonymousMessageBot(discord.Client):
     def __init__(self):
         super().__init__(intents=discord.Intents.default())
@@ -42,15 +42,13 @@ async def prox3(interaction: discord.Interaction, message_type: app_commands.Cho
     if message_type.value == "confession":
         await interaction.response.send_message("Your anonymous confession has been sent!", ephemeral=True)
 
-        last_bot_message = None
-        async for msg in channel.history(limit=50):
-            if msg.author == bot.user:
-                last_bot_message = msg
-                break
-
         confession_number = 1
-        if last_bot_message:
-            confession_number = extract_confession_number(last_bot_message.content) + 1
+        async for msg in channel.history(limit=100): 
+            if msg.author == bot.user:
+                confession_number = extract_confession_number(msg.content)
+                if confession_number > 0:  
+                    confession_number += 1
+                    break
 
         await channel.send(f"Confession #{confession_number}: {message}")
 
