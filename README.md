@@ -26,3 +26,6 @@ a very simple discord bot that allows users to send anonymous messages, confessi
 - run `pip instal -r requirements.txt`
 - create a .env file in the same directory and add your bot token (variable as `BOT_TOKEN`)
 - run it :D
+
+## acknowledgements
+almost all inspo came from the [prox2](https://github.com/anirudhb/prox2) bot for slack, made by [hackclub](hackclub.com). 
