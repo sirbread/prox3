@@ -1,6 +1,9 @@
 # prox3
 a very simple discord bot that allows users to send anonymous messages, confessions, and polls.
 
+## add the official bot to your server!
+use [this](https://discord.com/oauth2/authorize?client_id=1329776633334206474) link. it may _sometimes_ be down, since it's hosted on @hackclub's nest server.
+
 ## features
 - 100% anonimity (yes, I can't view anything either)
 - send anonymous confessions (/prox3 confession [message])
